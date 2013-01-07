@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+
+set -e
+
+AWS_TOOLS_PATH=""
+ARGS=""
+
+if [[ -d "src" ]]; then
+  ARGS="$ARGS -Isrc src/aws_tools.rb"
+fi
+
+if [[ -d "bundle" ]]; then
+  ARGS="-Ibundle $ARGS"
+else
+  ARGS="-rubygems $ARGS"
+fi
+
+exec ruby $ARGS $@

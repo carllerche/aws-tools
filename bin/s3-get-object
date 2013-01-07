@@ -1,0 +1,2 @@
+#/usr/bin/env bash
+exec aws-tools s3-get-object $@
