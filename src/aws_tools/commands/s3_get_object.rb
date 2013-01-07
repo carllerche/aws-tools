@@ -1,6 +1,7 @@
 module AwsTools
   module Commands
     class S3GetObject < Base
+      include S3Helpers
 
       def self.arguments
         "BUCKET PATH"
@@ -20,12 +21,11 @@ module AwsTools
         end
       end
 
-      def run(*args)
-        if args.empty?
-          help
-          exit
-        end
-        p options
+      def run(bucket, path)
+        raise NotImplementedError if options[:if_match]
+
+        dir = s3.directories.new(:key => bucket)
+        p dir.files.get(:key => pah)
       end
     end
 

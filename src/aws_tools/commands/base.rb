@@ -43,6 +43,10 @@ module AwsTools
             options[:region] = region
           end
 
+          p.on '--ssl', 'Use SSL' do
+            options[:ssl] = true
+          end
+
           p.on_tail '-h', '--help', 'Show this message' do
             puts p
             exit
@@ -56,7 +60,14 @@ module AwsTools
 
         parser.parse!(args)
 
-        new(parser, options).run(*args)
+        new(options).run(*args)
+      rescue ArgumentError => e
+        puts parser
+        p e.message
+        exit 1
+      rescue Exception => e
+        STDERR.puts e.message
+        exit 1
       end
 
       def self.arguments
@@ -67,8 +78,7 @@ module AwsTools
         # Nothing here
       end
 
-      def initialize(parser, options)
-        @parser  = parser
+      def initialize(options)
         @options = options
       end
 
@@ -85,9 +95,16 @@ See 'aws-tools <command> -h' for more information on a specific command.'
 
     private
 
-      def help
-        puts @parser
+      def fog_basic_options
+        opts = {}
+        opts[:scheme]                = 'https' if options[:ssl]
+        opts[:region]                = options[:region]
+        opts[:use_iam_profile]       = options[:iam]
+        opts[:aws_access_key_id]     = options[:access_key_id]
+        opts[:aws_secret_access_key] = options[:secret_access_key]
+        opts
       end
+
     end
 
   end
